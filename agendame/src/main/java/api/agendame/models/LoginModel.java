@@ -2,7 +2,11 @@ package api.agendame.models;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class LoginModel {
     /*Como não haverá implementação no banco de dados, vou apenas 'mockar' as informações*/
     @Email(message = "Preencha o campo login ")
@@ -13,21 +17,5 @@ public class LoginModel {
     public LoginModel(String _login, String _password){
         login = _login;
         password = _password;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

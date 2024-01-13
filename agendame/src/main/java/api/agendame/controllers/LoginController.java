@@ -22,27 +22,24 @@ public class LoginController {
 
     private UserModel currentUser;
 
-    @GetMapping("/login/{login}/{password}")
-    public ResponseEntity<Object> login(@PathVariable(value = "login") @Valid String login,
-                                        @PathVariable(value = "password") @Valid String password)
-             {
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody LoginModel loginModel)
+    {
         currentUser = null;
-        var loginModel = new LoginModel("aluizio@estreladistribuidora.com.br", "123456");
+        var loginModelTemp=
+                new LoginModel("aluizio@estreladistribuidora.com.br", "123456");
 
-        var loginModelTemp = new LoginModel(login, password);
-        loginModelTemp.setLogin(login);
-        loginModelTemp.setPassword(password);
         int secondsToSleep = 1;
         try {
-             TimeUnit.SECONDS.sleep(secondsToSleep);
+            TimeUnit.SECONDS.sleep(secondsToSleep);
         } catch (InterruptedException ie) {
-             Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();
         }
 
         if(!loginModel.getLogin().equals(loginModelTemp.getLogin())
                 || !loginModel.getPassword().equals(loginModelTemp.getPassword())){
 
-           throw new AuthenticationException();
+            throw new AuthenticationException();
         }
 
         currentUser = new UserModel()
@@ -51,16 +48,6 @@ public class LoginController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new UserResource().toHashMap(currentUser));
-    }
-
-    @PostMapping("/loginPost")
-    public ResponseEntity<Object> loginPost(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization
-            , @RequestBody String email)
-    {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(email);
     }
 
     @GetMapping("/userLogged")
