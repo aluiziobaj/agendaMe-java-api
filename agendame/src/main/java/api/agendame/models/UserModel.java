@@ -12,17 +12,13 @@ import java.io.Serializable;
 public class UserModel implements Serializable {
     private int Id;
     private String Nome;
-    private String Login;
-    private String Senha;
-    private String Token;
+    private String Email;
 
-    public UserModel getInstance(int id, String nome, String login, String senha, String token){
+    public UserModel getInstance(int id, String nome, String email){
         var userModel = new UserModel();
         userModel.Id = id;
         userModel.Nome = nome;
-        userModel.Login = login;
-        userModel.Senha = senha;
-        userModel.Token = token;
+        userModel.Email = email;
         return userModel;
     }
 
