@@ -13,7 +13,7 @@ public class UserResource {
         HashMap map = new HashMap();
         map.put("id", userModel.getId());
         map.put("nome", userModel.getNome());
-        map.put("email", userModel.getEmail());
+        map.put("login", userModel.getLogin());
         return  map;
     }
 }

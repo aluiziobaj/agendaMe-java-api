@@ -1,53 +1,58 @@
 package api.agendame.controllers;
 
 import api.agendame.CustomInfo;
-import api.agendame.exception.AuthenticationException;
-import api.agendame.models.LoginModel;
 import api.agendame.models.UserModel;
 import api.agendame.resources.UserResource;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-public class LoginController {
-
-    /*
-    Post esta pedindo para desativar o CSRF.
-    Não vou fazer isso pois preciso entendê-lo melhor
-    */
+public class LoginController{
 
     private UserModel currentUser;
+    public static ArrayList<UserModel> usuarios = new ArrayList<UserModel>();
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginModel loginModel)
+    public ResponseEntity<Object> login(@RequestBody UserModel userModel)
     {
         currentUser = null;
-        var loginModelTemp=
-                new LoginModel("aluizio@estreladistribuidora.com.br", "123456");
 
-        int secondsToSleep = 1;
+        if(usuarios.isEmpty()){
+            usuarios.add(new UserModel(1, "Aluizio Araujo"
+                    ,"aluizio@estreladistribuidora.com.br", "123456"));
+        }
+
+        int secondsToSleep = 2;
         try {
             TimeUnit.SECONDS.sleep(secondsToSleep);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
 
-        if(!loginModel.getLogin().equals(loginModelTemp.getLogin())
-                || !loginModel.getPassword().equals(loginModelTemp.getPassword())){
+        for (int i = 0; i < usuarios.size(); i++) {
+            var user = usuarios.get(i);
 
-            throw new AuthenticationException();
+            if(user.getLogin().equals(userModel.getLogin()) && user.getPassword().equals(userModel.getPassword())){
+                user.setCurrentUser(true);
+                currentUser = user;
+            }else{
+                user.setCurrentUser(false);
+            }
+
+            usuarios.set(i ,user);
         }
 
-        currentUser = new UserModel()
-                .getInstance(1, "Aluizio", loginModel.getLogin());
+        if(currentUser != null){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new UserResource().toHashMap(currentUser));
+        }
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new UserResource().toHashMap(currentUser));
+                .status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
     @GetMapping("/userLogged")
